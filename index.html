@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CropSure - Your Smart Crop Insurance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        header {
+            background: linear-gradient(90deg, #2a69bd, #1e4d90);
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #e0f7fa 0%, #c5e1e6 100%);
+            padding: 8rem 0;
+            text-align: center;
+        }
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #5e7a8d;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        .btn-secondary {
+            color: #3498db;
+            background-color: transparent;
+            border: 2px solid #3498db;
+            padding: 0.9rem 1.9rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #e0f2f7;
+            color: #2980b9;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        .section-subtitle {
+            color: #5e7a8d;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        .feature-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.2s ease-in-out;
+        }
+        .feature-card:hover {
+            transform: scale(1.03);
+        }
+        .feature-icon {
+            color: #3498db;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #34495e;
+            margin-bottom: 0.75rem;
+        }
+        .feature-description {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .weather-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.2s ease-in-out;
+        }
+        .weather-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        }
+        .weather-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .weather-value {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 0.25rem;
+        }
+        .weather-unit {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        .policy-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: transform 0.2s ease-in-out;
+        }
+        .policy-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        }
+        .policy-header {
+            background-color: #f0f8ff;
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .policy-title {
+            font-weight: 600;
+            color: #34495e;
+        }
+        .policy-description {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            padding: 1rem;
+        }
+        .policy-details {
+            padding: 1rem;
+        }
+        .policy-details-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #5e7a8d;
+        }
+        .policy-details-value {
+            font-weight: 500;
+            color: #34495e;
+        }
+        .policy-purchase-btn {
+            background-color: #27ae60;
+            color: white;
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .policy-purchase-btn:hover {
+            background-color: #1e8449;
+        }
+        .how-it-works-step {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            text-align: center;
+        }
+        .how-it-works-icon {
+            background-color: #e3f2fd;
+            color: #2196f3;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+        .how-it-works-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 0.5rem;
+        }
+        .how-it-works-description {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        #myPoliciesSection table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1rem;
+        }
+        #myPoliciesSection th, #myPoliciesSection td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        #myPoliciesSection th {
+            background-color: #f8f8f8;
+            font-weight: 600;
+            color: #34495e;
+        }
+        #myPoliciesSection tbody tr:last-child td {
+            border-bottom: none;
+        }
+        #myPoliciesSection .status-active {
+            background-color: #e6ffe9;
+            color: #28a745;
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+        #myPoliciesSection .status-inactive {
+            background-color: #ffebee;
+            color: #d32f2f;
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+        .powered-by {
+            background-color: #f9fbe7;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        .powered-by h3 {
+            color: #558b2f;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .powered-by p {
+            color: #689f38;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        .powered-by-oracle {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+            text-align: center;
+        }
+        .footer {
+            background-color: #34495e;
+            color: #ecf0f1;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        .footer h4 {
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        .footer a {
+            color: #ecf0f1;
+            transition: color 0.3s ease;
+        }
+        .footer a:hover {
+            color: #aed6f1;
+        }
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        .hero-navigation a {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            margin: 0 0.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #3498db;
+            font-weight: 500;
+            background-color: #e0f2f7;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .hero-navigation a:hover {
+            background-color: #cce5ff;
+            color: #2980b9;
+        }
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .truncate-address {
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen">
+        <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-md">
+            <div class="container mx-auto px-4 py-5">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-shield-alt text-xl"></i>
+                        <h1 class="text-xl font-semibold">CropSure 🚜🌾</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="authButton" class="bg-white text-blue-600 px-3 py-1.5 rounded-md font-medium hover:bg-blue-50 transition">
+                            Sign In
+                        </button>
+                        <span id="userGreeting" class="hidden bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm truncate-address"></span>
+                        <button id="logoutButton" class="hidden bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600 transition">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="hero-section">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="hero-title">Protect Your Harvest with Smart Crop Insurance 🚜🌿</h2>
+                <p class="hero-subtitle">
+                    Secure your livelihood against unpredictable weather in **Your Region**. CropSure offers transparent, automated parametric insurance powered by Chainlink, ensuring fast and fair payouts when you need them most.
+                </p>
+                <div class="flex justify-center space-x-4 mb-6">
+                    <button id="explorePolicies" class="btn-primary">
+                        Explore Policies
+                    </button>
+                    <button id="howItWorksBtn" class="btn-secondary">
+                        How It Works
+                    </button>
+                </div>
+                <div class="hero-navigation">
+                    <a href="#weather-section">Current Weather</a>
+                    <a href="#policies-section">Available Policies</a>
+                    <a href="#myPoliciesSection">My Active Policies</a>
+                    <a href="#how-it-works-section">How CropSure Works</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works-section" class="py-16 bg-white">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="section-title">How CropSure Protects Your Farm</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="how-it-works-step">
+                        <div class="how-it-works-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                        <h4 class="how-it-works-title">Purchase Your Parametric Policy</h4>
+                        <p class="how-it-works-description">
+                            Choose a policy based on weather risks relevant to your crops in **Your Region**. Our parametric policies cover specific events like rainfall deficits or high temperatures.
+                        </p>
+                    </div>
+                    <div class="how-it-works-step">
+                        <div class="how-it-works-icon"><i class="fas fa-satellite-dish"></i></div>
+                        <h4 class="how-it-works-title">Chainlink Oracles Monitor Conditions</h4>
+                        <p class="how-it-works-description">
+                            **Chainlink's decentralized oracles** fetch reliable weather data for **your location** from trusted sources, ensuring unbiased and accurate monitoring.
+                        </p>
+                    </div>
+                    <div class="how-it-works-step">
+                        <div class="how-it-works-icon"><i class="fas fa-coins"></i></div>
+                        <h4 class="how-it-works-title">Automated Payout Triggered by Smart Contract</h4>
+                        <p class="how-it-works-description">
+                            If the weather conditions in **your area** meet your policy's predefined triggers, the **smart contract** automatically initiates a payout to your wallet.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <main class="container mx-auto px-4 py-12">
+            <section id="weather-section" class="mb-16">
+                <h2 class="section-title">Current Weather Conditions</h2>
+                <div class="mb-6">
+                    <label for="weatherLocationInput" class="block text-gray-700 mb-2 font-semibold">Enter your specific Location (e.g., your village or district) to get weather data:</label>
+                    <div class="flex space-x-2">
+                        <input type="text" id="weatherLocationInput" class="flex-grow p-3 border border-gray-300 rounded-md" placeholder="e.g., Your Village, Your District">
+                        <button id="fetchWeatherBtn" class="btn-primary">
+                            Get Weather
+                        </button>
+                    </div>
+                    <div id="weatherError" class="hidden bg-red-100 text-red-700 p-2 rounded mt-2 text-sm"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="weather-card">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-semibold text-gray-700"><i class="fas fa-cloud-rain text-blue-500 mr-2"></i> Rainfall</h4>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-800 mb-1" id="currentRainfall">-- mm</div>
+                        <div class="text-sm text-gray-500">Last 24 hours</div>
+                    </div>
+                    <div class="weather-card">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-semibold text-gray-700"><i class="fas fa-temperature-high text-orange-500 mr-2"></i> Temperature</h4>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-800 mb-1" id="currentTemperature">-- °C</div>
+                        <div class="text-sm text-gray-500">Daily average</div>
+                    </div>
+                    <div class="weather-card">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-semibold text-gray-700"><i class="fas fa-seedling text-green-500 mr-2"></i> Soil Moisture</h4>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-800 mb-1" id="currentSoilMoisture">-- %</div>
+                        <div class="text-sm text-gray-500">Top 20cm layer</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="policies-section" class="mb-16">
+                <h2 class="section-title">Available Insurance Policies for Your Region</h2>
+                <p class="section-subtitle">Choose the policy that best fits your crops and risk tolerance in **your region**.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="policy-card">
+                        <div class="policy-header bg-blue-50">
+                            <h4 class="policy-title">Basic Rainfall Protection</h4>
+                            <p class="policy-description">Protection against drought conditions common in agricultural areas.</p>
+                        </div>
+                        <div class="policy-details">
+                            <div class="policy-details-row">
+                                <span>Coverage Period</span>
+                                <span class="policy-details-value">30 days</span>
+                            </div>
+                            <div class="policy-details-row">
+                                <span>Payout Trigger</span>
+                                <span class="policy-details-value">&lt; 50mm rainfall</span>
+                            </div>
+                            <div class="policy-details-row">
+                                <span>Premium</span>
+                                <span class="policy-details-value text-blue-600">0.05 ETH</span>
+                            </div>
+                            <div class="policy-details-row">
+                                <span>Payout</span>
+                                <span class="policy-details-value text-green-600">0.5 ETH</span>
+                            </div>
+                        </div>
+                        <button class="policy-purchase-btn policy-config-btn" data-policy="basic">
+                            Purchase Policy
+                        </button>
+                    </div>
+
+                    <div class="policy-card">
+                        <div class="policy-header bg-green-50">
+                            <h4 class="policy-title">Comprehensive Protection</h4>
+                            <p class="policy-description">Covers both rainfall deficit and high temperature risks affecting agriculture.</p>
+                        </div>
+                        <div class="policy-details">
+                            <div class="policy-details-row">
+                                <span>Coverage Period</span>
+                                <span class="policy-details-value">60 days</span>
+                            </div>
+                            <div class="policy-details-row">
+                                <span>Payout Triggers</span>
+                                <span class="policy-details-value">&lt; 50mm rain OR &gt; 35°C</span>
+                            </div>
+                            <div class="policy-details-row">
+                                <span>Premium</span>
+                                <span class="policy-details-value text-blue-600">0.1 ETH</span>
+                            </div>
+                            <div class="policy-details-row">
+                                <span>Payout</span>
+                                <span class="policy-details-value text-green-600">1 ETH</span>
+                            </div>
+                        </div>
+                        <button class="policy-purchase-btn policy-config-btn" data-policy="comprehensive">
+                            Purchase Policy
+                        </button>
+                    </div>
+
+                    <div class="policy-card">
+                        <div class="policy-header bg-purple-50">
+                            <h4 class="policy-title">Seasonal Protection</h4>
+                            <p class="policy-description">Long-term coverage for the entire growing season in your region.</p>
+                        </div>
+                        <div class="policy-details">
+                            <div class="policy-details-row">
+                                <span>Coverage Period</span>
+                                <span class="policy-details-value">120 days</span>
+                            </div>
+                            <div class="policy-details-row">
+                                <span>Payout Triggers</span>
+                                <span class="policy-details-value">&lt; 200mm rain OR &gt; 40°C</span>
+                            </div>
+                            <div class="policy-details-row">
+                                <span>Premium</span>
+                                <span class="policy-details-value text-blue-600">0.2 ETH</span>
+                            </div>
+                            <div class="policy-details-row">
+                                <span>Payout</span>
+                                <span class="policy-details-value text-green-600">2 ETH</span>
+                            </div>
+                        </div>
+                        <button class="policy-purchase-btn policy-config-btn" data-policy="seasonal">
+                            Purchase Policy
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="myPoliciesSection" class="mb-16 hidden">
+                <h2 class="section-title">My Active Policies</h2>
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="py-3 px-4 text-left font-semibold text-gray-700">Policy</th>
+                                <th class="py-3 px-4 text-left font-semibold text-gray-700">Status</th>
+                                <th class="py-3 px-4 text-left font-semibold text-gray-700">Coverage</th>
+                                <th class="py-3 px-4 text-left font-semibold text-gray-700">Location</th>
+                                <th class="py-3 px-4 text-left font-semibold text-gray-700">Crop / Acres</th>
+                                <th class="py-3 px-4 text-left font-semibold text-gray-700">Payout</th>
+                                <th class="py-3 px-4 text-left font-semibold text-gray-700">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="policyList">
+                            </tbody>
+                    </table>
+                </div>
+                <div id="noPoliciesMessage" class="hidden text-center text-gray-500 mt-4">You have no active policies.</div>
+            </section>
+
+            <section class="mt-16 powered-by">
+                <div class="flex flex-col md:flex-row items-center justify-around">
+                    <div class="md:w-1/2 mb-6 md:mb-0">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-3">Reliable Data, Automated Payouts</h3>
+                        <p class="text-gray-700 mb-4">
+                            CropSure leverages the power of **Chainlink** to bring you a trustworthy and efficient crop insurance solution in **your agricultural region**. Our use of decentralized oracles ensures transparency and accuracy in weather data, leading to timely payouts.
+                        </p>
+                        <div class="flex items-center space-x-2 text-blue-700">
+                            <i class="fas fa-link"></i>
+                            <span>Connected to Chainlink Mainnet (Simulated)</span>
+                        </div>
+                    </div>
+                    <div class="md:w-1/3 flex justify-center">
+                        <div class="powered-by-oracle">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-cloud-sun text-yellow-500 text-3xl"></i>
+                                <p class="text-lg font-semibold text-gray-800">Weather Data Oracle</p>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2">Source: AccuWeather (Simulated for **Your Region**)</p>
+                            <p class="text-sm text-gray-600 mb-2">Update Frequency: Every 15 mins</p>
+                            <p class="text-sm text-gray-600">Last Update: <span id="lastChainlinkUpdate">Loading...</span></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="bg-gray-800 text-white py-8 mt-12 footer">
+            <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <div>
+                    <h4 class="font-semibold text-lg mb-3">CropSure 🚜🌾</h4>
+                    <p class="text-sm">&copy; 2025 CropSure. All rights reserved.</p>
+                </div>
+                <div class="footer-links">
+                    <h4 class="font-semibold text-lg mb-3">Quick Links</h4>
+                    <ul class="text-sm space-y-2">
+                        <li><a href="#" class="hover:text-blue-300 transition">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-blue-300 transition">Terms of Service</a></li>
+                        <li><a id="contactUsLink" href="https://docs.google.com/forms/d/1UZpogqVQoY8DPy4u9xgFagDYZec5FPh1GPtuNpzwtgE/edit" target="_blank" class="hover:text-blue-300 transition">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4 class="font-semibold text-lg mb-3">Connect With Us</h4>
+                    <div class="flex justify-center md:justify-start space-x-4">
+                        <a href="https://www.linkedin.com/in/neelima-vegi/" class="hover:text-blue-300 transition"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="https://www.linkedin.com/in/neelima-vegi/" class="hover:text-blue-300 transition"><i class="fab fa-github fa-lg"></i></a>
+                        <a href="https://www.linkedin.com/in/neelima-vegi/" class="hover:text-blue-300 transition"><i class="fab fa-linkedin fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div id="signInModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-backdrop">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800">Sign In</h3>
+                <button onclick="closeModal('signInModal')" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="signInError" class="hidden bg-red-100 text-red-700 p-3 rounded mb-4 text-sm"></div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2 font-semibold">Email</label>
+                <input type="email" id="signInEmail" class="w-full p-3 border border-gray-300 rounded-md" placeholder="your@email.com" value="ABC@gmail.com">
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 mb-2 font-semibold">Password</label>
+                <input type="password" id="signInPassword" class="w-full p-3 border border-gray-300 rounded-md" placeholder="••••••••" value="demo123">
+            </div>
+            <button id="signInSubmit" class="btn-primary w-full mb-3">
+                Sign In
+            </button>
+            <div class="text-center">
+                <p class="text-sm text-gray-600">Don't have an account? <button onclick="showModal('registerModal'); closeModal('signInModal');" class="text-blue-600 hover:text-blue-800 font-semibold">Register</button></p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-gray-200">
+                <p class="text-sm text-gray-600 mb-3 text-center">Or connect with wallet</p>
+                <button id="connectWallet" class="w-full bg-gray-800 text-white py-3 rounded-md font-semibold hover:bg-gray-700 transition flex items-center justify-center">
+                    <i class="fab fa-ethereum mr-2"></i> Connect Wallet
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="registerModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-backdrop">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800">Create Account</h3>
+                <button onclick="closeModal('registerModal')" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="registerError" class="hidden bg-red-100 text-red-700 p-3 rounded mb-4 text-sm"></div>
+            <div id="registerSuccess" class="hidden bg-green-100 text-green-700 p-3 rounded mb-4 text-sm"></div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2 font-semibold">Full Name</label>
+                <input type="text" id="registerName" class="w-full p-3 border border-gray-300 rounded-md" placeholder="John Doe">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2 font-semibold">Email</label>
+                <input type="email" id="registerEmail" class="w-full p-3 border border-gray-300 rounded-md" placeholder="your@email.com">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2 font-semibold">Password</label>
+                <input type="password" id="registerPassword" class="w-full p-3 border border-gray-300 rounded-md" placeholder="••••••••">
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 mb-2 font-semibold">Confirm Password</label>
+                <input type="password" id="registerConfirmPassword" class="w-full p-3 border border-gray-300 rounded-md" placeholder="••••••••">
+            </div>
+            <button id="registerSubmit" class="bg-green-600 text-white py-3 rounded-md font-semibold hover:bg-green-700 transition w-full mb-3">
+                Register
+            </button>
+            <div class="text-center">
+                <p class="text-sm text-gray-600">Already have an account? <button onclick="showModal('signInModal'); closeModal('registerModal');" class="text-blue-600 hover:text-blue-800 font-semibold">Sign In</button></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="policyConfigModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-backdrop">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800" id="policyConfigTitle">Configure Policy</h3>
+                <button onclick="closeModal('policyConfigModal')" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="policyConfigError" class="hidden bg-red-100 text-red-700 p-3 rounded mb-4 text-sm"></div>
+
+            <input type="hidden" id="selectedPolicyType">
+
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2 font-semibold">Location (City/District)</label>
+                <input type="text" id="policyLocation" class="w-full p-3 border border-gray-300 rounded-md" placeholder="e.g., Your City, Your State">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2 font-semibold">Crop Type</label>
+                <select id="policyCrop" class="w-full p-3 border border-gray-300 rounded-md">
+                    <option value="">Select Crop</option>
+                    <option value="paddy">Paddy 🌾</option>
+                    <option value="cotton">Cotton ☁️</option>
+                    <option value="maize">Maize 🌽</option>
+                    <option value="groundnut">Groundnut 🥜</option>
+                    <option value="chilli">Chilli 🌶️</option>
+                    <option value="sugarcane">Sugarcane 🎋</option>
+                    <option value="other">Other 🧑‍🌾</option>
+                </select>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-gray-700 mb-2 font-semibold">Land in Acres</label>
+                <input type="number" id="policyLandAcres" class="w-full p-3 border border-gray-300 rounded-md" placeholder="e.g., 5" min="0.1" step="0.1">
+            </div>
+
+            <button id="confirmPurchaseBtn" class="btn-primary w-full">
+                Confirm Purchase
+            </button>
+        </div>
+    </div>
+
+    <div id="viewDetailsModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-backdrop">
+        <div class="bg-white rounded-xl p-8 max-w-lg w-full mx-4 shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800">Policy Details</h3>
+                <button onclick="closeModal('viewDetailsModal')" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="policyDetailsContent" class="text-gray-700 text-sm">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><strong class="text-gray-800">Policy Name:</strong> <span id="detailPolicyName"></span></div>
+                    <div><strong class="text-gray-800">ID:</strong> <span id="detailPolicyId"></span></div>
+                    <div><strong class="text-gray-800">Status:</strong> <span id="detailStatus"></span></div>
+                    <div><strong class="text-gray-800">Coverage Period:</strong> <span id="detailCoveragePeriod"></span></div>
+                    <div class="col-span-2"><strong class="text-gray-800">Payout Trigger:</strong> <span id="detailPayoutTrigger"></span></div>
+                    <div><strong class="text-gray-800">Premium:</strong> <span id="detailPremium"></span></div>
+                    <div><strong class="text-gray-800">Potential Payout:</strong> <span id="detailPayout"></span></div>
+                    <div><strong class="text-gray-800">Location:</strong> <span id="detailLocation"></span></div>
+                    <div><strong class="text-gray-800">Crop Type:</strong> <span id="detailCrop"></span></div>
+                    <div><strong class="text-gray-800">Land (Acres):</strong> <span id="detailLandAcres"></span></div>
+                    <div class="col-span-2"><strong class="text-gray-800">Purchase Date:</strong> <span id="detailPurchaseDate"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // User data storage (for demo purposes - not secure for production)
+        let users = [
+            { email: "ABC@gmail.com", password: "demo123", name: "Demo User", walletAddress: "" }
+        ];
+
+        // Policies data structure (can be expanded with more details like policyId, purchaseDate, etc.)
+        let policies = [
+            // Initial dummy policy for demonstration with a unique ID
+            { id: 1, type: "basic", name: "Basic Rainfall Protection", period: "30 days", trigger: "< 50mm rainfall", premium: "0.05 ETH", payout: "0.5 ETH", status: "Active", ownerEmail: "ABC@gmail.com", location: "Your Demo Location, Your State", crop: "Paddy", landAcres: 10, purchaseDate: new Date().toISOString() },
+        ];
+        let nextPolicyId = 2; // To ensure unique IDs for new policies
+
+        // DOM Elements
+        const authButton = document.getElementById('authButton');
+        const logoutButton = document.getElementById('logoutButton');
+        const userGreeting = document.getElementById('userGreeting');
+        const signInSubmit = document.getElementById('signInSubmit');
+        const connectWallet = document.getElementById('connectWallet');
+        const registerSubmit = document.getElementById('registerSubmit');
+        const policyList = document.getElementById('policyList');
+        const myPoliciesSection = document.getElementById('myPoliciesSection');
+        const noPoliciesMessage = document.getElementById('noPoliciesMessage');
+        const howItWorksBtn = document.getElementById('howItWorksBtn');
+
+        // Policy Configuration Modal elements
+        const policyConfigModal = document.getElementById('policyConfigModal');
+        const policyConfigTitle = document.getElementById('policyConfigTitle');
+        const selectedPolicyType = document.getElementById('selectedPolicyType');
+        const policyLocationInput = document.getElementById('policyLocation');
+        const policyCropSelect = document.getElementById('policyCrop');
+        const policyLandAcresInput = document.getElementById('policyLandAcres');
+        const confirmPurchaseBtn = document.getElementById('confirmPurchaseBtn');
+        const policyConfigError = document.getElementById('policyConfigError');
+
+        // Weather section elements
+        const weatherLocationInput = document.getElementById('weatherLocationInput');
+        const fetchWeatherBtn = document.getElementById('fetchWeatherBtn');
+        const currentRainfall = document.getElementById('currentRainfall');
+        const currentTemperature = document.getElementById('currentTemperature');
+        const currentSoilMoisture = document.getElementById('currentSoilMoisture');
+        const weatherError = document.getElementById('weatherError');
+
+        // View Details Modal elements
+        const viewDetailsModal = document.getElementById('viewDetailsModal');
+        const detailPolicyName = document.getElementById('detailPolicyName');
+        const detailPolicyId = document.getElementById('detailPolicyId');
+        const detailStatus = document.getElementById('detailStatus');
+        const detailCoveragePeriod = document.getElementById('detailCoveragePeriod');
+        const detailPayoutTrigger = document.getElementById('detailPayoutTrigger');
+        const detailPremium = document.getElementById('detailPremium');
+        const detailPayout = document.getElementById('detailPayout');
+        const detailLocation = document.getElementById('detailLocation');
+        const detailCrop = document.getElementById('detailCrop');
+        const detailLandAcres = document.getElementById('detailLandAcres');
+        const detailPurchaseDate = document.getElementById('detailPurchaseDate');
+
+
+        // --- Helper Functions for UI ---
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            // Clear any error messages when closing modals
+            if (modalId === 'signInModal') {
+                document.getElementById('signInError').classList.add('hidden');
+            } else if (modalId === 'registerModal') {
+                document.getElementById('registerError').classList.add('hidden');
+                document.getElementById('registerSuccess').classList.add('hidden');
+            } else if (modalId === 'policyConfigModal') {
+                document.getElementById('policyConfigError').classList.add('hidden');
+            }
+        }
+
+        function showError(containerId, message) {
+            const container = document.getElementById(containerId);
+            container.textContent = message;
+            container.classList.remove('hidden');
+            setTimeout(() => container.classList.add('hidden'), 5000); // Hide after 5 seconds
+        }
+
+        function showSuccess(containerId, message) {
+            const container = document.getElementById(containerId);
+            container.textContent = message;
+            container.classList.remove('hidden');
+            setTimeout(() => container.classList.add('hidden'), 5000); // Hide after 5 seconds
+        }
+
+        // --- Authentication Functions ---
+        function signIn(email, password) {
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) {
+                localStorage.setItem('loggedInUser', JSON.stringify(user));
+                updateUI();
+                closeModal('signInModal');
+                renderUserPolicies();
+                return true;
+            }
+            showError('signInError', 'Invalid email or password');
+            return false;
+        }
+
+        function register(name, email, password, confirmPassword) {
+            if (!name || !email || !password || !confirmPassword) {
+                showError('registerError', 'All fields are required.');
+                return false;
+            }
+            if (password !== confirmPassword) {
+                showError('registerError', 'Passwords do not match.');
+                return false;
+            }
+            if (users.some(u => u.email === email)) {
+                showError('registerError', 'An account with this email already exists.');
+                return false;
+            }
+
+            const newUser = { email, password, name, walletAddress: "" };
+            users.push(newUser);
+            // After successful registration, direct user to sign in
+            showSuccess('registerSuccess', 'Account created successfully! Please sign in.');
+            // Optionally, you can directly sign them in after registration
+            // signIn(email, password);
+            return true;
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            localStorage.removeItem('walletConnected');
+            localStorage.removeItem('walletAddress');
+            updateUI();
+            renderUserPolicies(); // Clear policies on logout
+        }
+
+        async function connectWalletHandler() {
+            if (window.ethereum) {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const address = accounts[0];
+
+                    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+                    if (!loggedInUser) {
+                        loggedInUser = users.find(u => u.walletAddress === address);
+                        if (!loggedInUser) {
+                            loggedInUser = {
+                                email: `wallet_${address.substring(2, 10)}@example.com`,
+                                password: "",
+                                name: `Wallet User ${address.substring(0, 6)}...`,
+                                walletAddress: address
+                            };
+                            users.push(loggedInUser);
+                        }
+                    } else {
+                        loggedInUser.walletAddress = address;
+                    }
+
+                    localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
+                    localStorage.setItem('walletConnected', 'true');
+                    localStorage.setItem('walletAddress', address);
+                    updateUI();
+                    closeModal('signInModal');
+                    renderUserPolicies();
+                } catch (error) {
+                    console.error("Error connecting wallet:", error);
+                    showError('signInError', 'Failed to connect wallet. Please ensure MetaMask is unlocked and allowed.');
+                }
+            } else {
+                alert('Please install MetaMask or another Ethereum wallet extension to connect.');
+            }
+        }
+
+        function updateUI() {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+            const loggedIn = !!user;
+
+            authButton.classList.toggle('hidden', loggedIn);
+            logoutButton.classList.toggle('hidden', !loggedIn);
+            userGreeting.classList.toggle('hidden', !loggedIn);
+            myPoliciesSection.classList.toggle('hidden', !loggedIn); // Hide/show "My Active Policies" section
+
+            if (loggedIn) {
+                const walletAddress = user.walletAddress || localStorage.getItem('walletAddress');
+                if (walletAddress) {
+                    userGreeting.textContent = `${user.name} (${walletAddress.substring(0, 6)}...)`;
+                } else {
+                    userGreeting.textContent = user.name;
+                }
+            }
+        }
+
+        // --- Policy Functions ---
+        function renderUserPolicies() {
+            policyList.innerHTML = '';
+            const currentUser = JSON.parse(localStorage.getItem('loggedInUser'));
+
+            if (!currentUser) {
+                myPoliciesSection.classList.add('hidden');
+                return;
+            }
+
+            const userPolicies = policies.filter(policy => policy.ownerEmail === currentUser.email);
+
+            if (userPolicies.length === 0) {
+                noPoliciesMessage.classList.remove('hidden');
+                policyList.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-gray-500">You have no active policies.</td></tr>`;
+            } else {
+                noPoliciesMessage.classList.add('hidden');
+                userPolicies.forEach(policy => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b last:border-b-0';
+                    row.innerHTML = `
+                        <td class="py-3 px-4">${policy.name}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 rounded-full text-xs font-medium ${policy.status === 'Active' ? 'bg-green-100 text-green-800 status-active' : 'bg-red-100 text-red-800 status-inactive'}">
+                                ${policy.status}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4">${policy.period} (${policy.trigger})</td>
+                        <td class="py-3 px-4">${policy.location || 'N/A'}</td>
+                        <td class="py-3 px-4">${policy.crop || 'N/A'} / ${policy.landAcres ? policy.landAcres + ' acres' : 'N/A'}</td>
+                        <td class="py-3 px-4 text-green-600">${policy.payout}</td>
+                        <td class="py-3 px-4 flex items-center space-x-2">
+                            <button class="text-blue-600 hover:text-blue-800 text-sm view-details-btn" data-policy-id="${policy.id}">View Details</button>
+                            <button class="text-red-600 hover:text-red-800 text-sm delete-policy-btn" data-policy-id="${policy.id}"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    `;
+                    policyList.appendChild(row);
+                });
+            }
+        }
+
+        function openPolicyConfig(policyType) {
+            const currentUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (!currentUser) {
+                showError('signInError', 'Please sign in or connect your wallet to purchase a policy.');
+                showModal('signInModal');
+                return;
+            }
+
+            const availablePolicies = [
+                { type: "basic", name: "Basic Rainfall Protection", period: "30 days", trigger: "< 50mm rainfall", premium: "0.05 ETH", payout: "0.5 ETH" },
+                { type: "comprehensive", name: "Comprehensive Protection", period: "60 days", trigger: "< 50mm rain OR > 35°C", premium: "0.1 ETH", payout: "1 ETH" },
+                { type: "seasonal", name: "Seasonal Protection", period: "120 days", trigger: "< 200mm rain OR > 40°C", premium: "0.2 ETH", payout: "2 ETH" },
+            ];
+            const policyDetails = availablePolicies.find(p => p.type === policyType);
+
+            if (policyDetails) {
+                policyConfigTitle.textContent = `Configure ${policyDetails.name}`;
+                selectedPolicyType.value = policyType;
+                // Pre-fill location from weather input if available (optional, can be cleared for fresh entry)
+                policyLocationInput.value = weatherLocationInput.value.trim();
+                policyCropSelect.value = ''; // Clear previous selection for new policy
+                policyLandAcresInput.value = ''; // Clear previous value for new policy
+                showModal('policyConfigModal');
+            } else {
+                console.error('Policy details for type "${policyType}" not found.');
+                showError('policyConfigError', 'Selected policy details could not be loaded.');
+            }
+        }
+
+        function confirmPurchase() {
+            const policyType = selectedPolicyType.value;
+            const location = policyLocationInput.value.trim();
+            const crop = policyCropSelect.value;
+            const landAcres = parseFloat(policyLandAcresInput.value);
+
+            if (!location || location.trim() === '') {
+                showError('policyConfigError', 'Please enter a location for your policy.');
+                return;
+            }
+            if (!crop || crop.trim() === '') {
+                showError('policyConfigError', 'Please select a crop type.');
+                return;
+            }
+            if (isNaN(landAcres) || landAcres <= 0) {
+                showError('policyConfigError', 'Please enter a valid amount of land in acres (must be greater than 0).');
+                return;
+            }
+
+            const currentUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            const availablePolicies = [
+                { type: "basic", name: "Basic Rainfall Protection", period: "30 days", trigger: "< 50mm rainfall", premium: "0.05 ETH", payout: "0.5 ETH" },
+                { type: "comprehensive", name: "Comprehensive Protection", period: "60 days", trigger: "< 50mm rain OR > 35°C", premium: "0.1 ETH", payout: "1 ETH" },
+                { type: "seasonal", name: "Seasonal Protection", period: "120 days", trigger: "< 200mm rain OR > 40°C", premium: "0.2 ETH", payout: "2 ETH" },
+            ];
+            const policyDetails = availablePolicies.find(p => p.type === policyType);
+
+            if (policyDetails) {
+                const newPolicy = {
+                    id: nextPolicyId++, // Assign unique ID
+                    ...policyDetails,
+                    status: "Active",
+                    ownerEmail: currentUser.email,
+                    location: location,
+                    crop: crop,
+                    landAcres: landAcres,
+                    purchaseDate: new Date().toISOString()
+                };
+                policies.push(newPolicy);
+                // Clear inputs after successful purchase
+                policyLocationInput.value = '';
+                policyCropSelect.value = '';
+                policyLandAcresInput.value = '';
+                showSuccess('policyConfigError', `"${newPolicy.name}" for ${location} (${crop}, ${landAcres} acres) purchased successfully!`);
+                closeModal('policyConfigModal');
+                renderUserPolicies();
+            } else {
+                showError('policyConfigError', 'Policy details not found for confirmation.');
+            }
+        }
+
+        // Function to display detailed policy info in a modal
+        function viewPolicyDetails(policyId) {
+            const policy = policies.find(p => p.id === parseInt(policyId));
+            if (policy) {
+                detailPolicyName.textContent = policy.name;
+                detailPolicyId.textContent = policy.id;
+                detailStatus.textContent = policy.status;
+                detailCoveragePeriod.textContent = policy.period;
+                detailPayoutTrigger.textContent = policy.trigger;
+                detailPremium.textContent = policy.premium;
+                detailPayout.textContent = policy.payout;
+                detailLocation.textContent = policy.location;
+                detailCrop.textContent = policy.crop;
+                detailLandAcres.textContent = policy.landAcres;
+                detailPurchaseDate.textContent = new Date(policy.purchaseDate).toLocaleString();
+
+                showModal('viewDetailsModal');
+            } else {
+                console.error(`Policy with ID ${policyId} not found.`);
+                alert('Policy details not found.');
+            }
+        }
+
+        // Function to delete a policy
+        function deletePolicy(policyId) {
+            if (confirm('Are you sure you want to delete this policy? This action cannot be undone.')) {
+                const initialLength = policies.length;
+                policies = policies.filter(p => p.id !== parseInt(policyId));
+                if (policies.length < initialLength) {
+                    showSuccess('myPoliciesSection', 'Policy deleted successfully!');
+                    renderUserPolicies(); // Re-render the list after deletion
+                } else {
+                    showError('myPoliciesSection', 'Failed to delete policy.');
+                }
+            }
+        }
+
+
+        // --- Weather Data Functions ---
+        async function fetchWeatherForLocation(location) {
+            weatherError.classList.add('hidden');
+            currentRainfall.textContent = 'Fetching...';
+            currentTemperature.textContent = 'Fetching...';
+            currentSoilMoisture.textContent = 'Fetching...';
+
+            if (!location || location.trim() === '') {
+                showError('weatherError', 'Please enter a location to get weather data.');
+                currentRainfall.textContent = '-- mm';
+                currentTemperature.textContent = '-- °C';
+                currentSoilMoisture.textContent = '-- %';
+                return;
+            }
+
+            // --- SIMULATED WEATHER DATA (Fallback if no real API or API fails) ---
+            await new Promise(resolve => setTimeout(resolve, 800)); // Simulate network delay
+
+            let rainfall, temperature, soilMoisture;
+            const lowerCaseLocation = location.toLowerCase();
+
+            // Provide somewhat realistic dummy data for specific Indian locations, no longer tied to Hyderabad
+            if (lowerCaseLocation.includes('your demo location') || lowerCaseLocation.includes('your state/region')) {
+                // Simulating general monsoon season or transition period
+                rainfall = (15 + Math.random() * 40).toFixed(1); // Moderate rainfall
+                temperature = (28 + Math.random() * 7).toFixed(1); // Warm temperature
+                soilMoisture = (45 + Math.random() * 30).toFixed(0); // Moderate to high soil moisture
+            } else if (lowerCaseLocation.includes('arid region')) {
+                // Typical for arid/semi-arid regions
+                rainfall = (2 + Math.random() * 10).toFixed(1); // Low rainfall
+                temperature = (30 + Math.random() * 12).toFixed(1); // High temperature
+                soilMoisture = (15 + Math.random() * 25).toFixed(0); // Low soil moisture
+            } else if (lowerCaseLocation.includes('coastal city')) {
+                // Typical for coastal, higher rainfall
+                rainfall = (80 + Math.random() * 100).toFixed(1); // High rainfall
+                temperature = (25 + Math.random() * 5).toFixed(1); // Moderate temperature
+                soilMoisture = (60 + Math.random() * 30).toFixed(0); // High soil moisture
+            } else if (lowerCaseLocation.includes('northern plains')) {
+                // Typical for northern plains, hot summers, moderate rain
+                rainfall = (10 + Math.random() * 30).toFixed(1);
+                temperature = (35 + Math.random() * 10).toFixed(1);
+                soilMoisture = (20 + Math.random() * 40).toFixed(0);
+            } else {
+                // Generic random data for any other location
+                rainfall = (Math.random() * 100).toFixed(1);
+                temperature = (20 + Math.random() * 20).toFixed(1);
+                soilMoisture = (30 + Math.random() * 50).toFixed(0);
+            }
+
+            currentRainfall.textContent = `${rainfall} mm`;
+            currentTemperature.textContent = `${temperature} °C`;
+            currentSoilMoisture.textContent = `${soilMoisture} %`;
+            console.log(`Simulated Weather for ${location}: Rain: ${rainfall}mm, Temp: ${temperature}°C, Soil Moisture: ${soilMoisture}%`);
+        }
+
+        function updateChainlinkInfo() {
+            const now = new Date();
+            document.getElementById('lastChainlinkUpdate').textContent = now.toLocaleTimeString() + ', ' + now.toLocaleDateString();
+        }
+
+        // --- Initialize Event Listeners ---
+        function initEventListeners() {
+            authButton.addEventListener('click', () => showModal('signInModal'));
+            logoutButton.addEventListener('click', logout);
+
+            signInSubmit.addEventListener('click', () => {
+                const email = document.getElementById('signInEmail').value;
+                const password = document.getElementById('signInPassword').value;
+                signIn(email, password);
+            });
+
+            registerSubmit.addEventListener('click', () => {
+                const name = document.getElementById('registerName').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('registerConfirmPassword').value;
+                register(name, email, password, confirmPassword);
+            });
+
+            connectWallet.addEventListener('click', connectWalletHandler);
+
+            // Event listener for all "Purchase Policy" buttons to open config modal
+            document.querySelectorAll('.policy-config-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const policyType = event.target.dataset.policy;
+                    openPolicyConfig(policyType);
+                });
+            });
+
+            confirmPurchaseBtn.addEventListener('click', confirmPurchase);
+
+            // Event delegation for "View Details" and "Delete" buttons within the policy list
+            policyList.addEventListener('click', (event) => {
+                if (event.target.classList.contains('view-details-btn')) {
+                    const policyId = event.target.dataset.policyId;
+                    viewPolicyDetails(policyId);
+                } else if (event.target.classList.contains('delete-policy-btn')) {
+                    const policyId = event.target.dataset.policyId;
+                    deletePolicy(policyId);
+                }
+                // Also check if a child of delete-policy-btn was clicked (e.g., the <i> tag)
+                else if (event.target.closest('.delete-policy-btn')) {
+                    const policyId = event.target.closest('.delete-policy-btn').dataset.policyId;
+                    deletePolicy(policyId);
+                }
+            });
+
+            // Fetch weather on button click
+            fetchWeatherBtn.addEventListener('click', () => {
+                const location = weatherLocationInput.value;
+                fetchWeatherForLocation(location);
+            });
+
+            // Smooth scroll for "How It Works" button in hero
+            howItWorksBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('how-it-works-section').scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Smooth scroll for hero navigation links
+            document.querySelectorAll('.hero-navigation a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            // Scroll to available policies for "Explore Policies"
+            document.getElementById('explorePolicies').addEventListener('click', () => {
+                document.getElementById('policies-section').scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        // --- Initialize the Application ---
+        function initApp() {
+            initEventListeners();
+            updateUI();
+            updateChainlinkInfo();
+            renderUserPolicies();
+
+            // Set default location for weather and fetch on load
+            weatherLocationInput.value = "Your Demo Location, Your State";
+            fetchWeatherForLocation(weatherLocationInput.value);
+
+            // Update weather and Chainlink info periodically
+            // Adjust intervals as needed, but be mindful of API call limits if using a real API
+            setInterval(() => fetchWeatherForLocation(weatherLocationInput.value), 60000); // Update weather every minute
+            setInterval(updateChainlinkInfo, 30000); // Update Chainlink timestamp every 30 seconds
+        }
+
+        // Start the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
